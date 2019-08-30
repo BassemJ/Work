@@ -6,8 +6,8 @@ Created on Tue Aug 20 20:43:02 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
+from statistics import mean
 
-# global variables
 BOARD_ROWS = 7
 BOARD_COLS = 10
 WIN_STATE = (3, 7)
@@ -39,8 +39,7 @@ class State:
 #        3 |
 #        4 |
 #        5 |
-#        6 |
-#        return next position     
+#        6 |  
         if action == "up":
             nxtState = (min(max(self.state[0] - (1 + WIND[self.state[1]]),0),6), self.state[1])
         elif action == "down":
@@ -49,10 +48,6 @@ class State:
             nxtState = (max(self.state[0] - WIND[self.state[1]],0), max(self.state[1] - 1,0))
         else:
             nxtState = (max(self.state[0] - WIND[self.state[1]],0), min(self.state[1] + 1,9))
-        # if next state legal
-#        if (nxtState[0] >= 0) and (nxtState[0] <= 6):
-#            if (nxtState[1] >= 0) and (nxtState[1] <= 9):
-#                    return nxtState
         return nxtState
 
 
@@ -65,8 +60,8 @@ class Agent:
         self.pathslength = []
         self.State = State()
         self.epsilon = 0.1
-        self.alpha = 0.5
-        self.gamma = 1.0
+        self.alpha = 0.4
+        self.gamma = 0.99
         self.q = {}
 
     def getQ(self, state, action):
@@ -80,7 +75,7 @@ class Agent:
             self.q[(state, action)] = oldv + self.alpha * (value - oldv)
 
     def chooseAction(self, state):
-        if np.random.random() < self.epsilon:
+        if np.random.uniform(0, 1) <= self.epsilon:
             action = np.random.choice(self.State.actions)
         else:
             q = [self.getQ(state, a) for a in self.State.actions]
@@ -109,18 +104,11 @@ class Agent:
         self.path = []
         self.State = State()
 
-    def play(self, rounds=10):
+    def play(self, rounds):
         i = 0
         while i < rounds:
-            # to the end of game back propagate reward
             if self.State.isEnd:
-                # back propagate
-#                reward = self.State.giveReward()
-                # explicitly assign end state to reward values
                 print("Number of moves done to reach goal state")
-#                print(self.states)
-#                print(self.rewards)
-#                print(self.path)
                 self.pathslength.append(len(self.path))
                 print(self.pathslength[len(self.pathslength)-1])
                 for j in reversed(range(len(self.path))):
@@ -129,17 +117,11 @@ class Agent:
                 i += 1
             else:
                 action = self.chooseAction(self.State.state)
-                # append trace
                 self.states.append(self.State.nxtPosition(action))
                 self.path.append(action)
-#                print("current position {} action {}".format(self.State.state, action))
-                # by taking the action, it reaches the next state
                 self.State = self.takeAction(action)
                 self.rewards.append(self.State.giveReward())
-                # mark is end
                 self.State.isEndFunc()
-#                print("nxt state", self.State.state)
-#                print("---------------------")
 
     def showPolicy(self):
         for i in range(0, BOARD_ROWS):
@@ -162,6 +144,8 @@ class Agent:
         print('----------------------------------')
         x=range(len(self.pathslength))
         y=self.pathslength
+        y_last=y[len(y)-100:len(y)-1]
+        print(mean(y_last))
         plt.yscale('log')
         plt.plot(x,y)
         plt.xlabel("Episode")
