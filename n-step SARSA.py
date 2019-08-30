@@ -91,10 +91,6 @@ class Agent:
             action = self.State.actions[i]
         return action
 
-#    def learn(self, state1, action1, reward, state2, action2):
-#        qnext = self.getQ(state2, action2)
-#        self.learnQ(state1, action1, reward, reward + self.gamma * qnext)
-
     def takeAction(self, action):
         position = self.State.nxtPosition(action)
         return State(state=position)
@@ -105,41 +101,6 @@ class Agent:
         self.path = []
         self.State = State()
 
-#    def play(self, rounds=10):
-#        i = 0        
-#        while i < rounds:
-#                        if self.State.isEnd:
-#                            T = float('inf')
-#                            tau = 0
-#                            print("Number of moves done to reach goal state")
-#                            self.pathslength.append(len(self.path))
-#                            print(self.pathslength[len(self.pathslength)-1])
-#                            for j in reversed(range(len(self.path))):
-#                                G = 0 
-#                                for k in range(tau + 1, min(tau + self.bootstrap,T)):
-#                                    G += pow(self.gamma,k-tau-1)*self.rewards[k]
-#                                self.learnQ(self.states[j],self.path[j],G)
-###                                self.learn(self.states[j-1],self.path[j-1],self.rewards[j],self.states[j],self.path[j])
-##                                t = len(self.path)
-##                                T = t
-##                                tau = t - self.bootstrap
-##                                while tau < T - 1:
-##                                    if tau >= 0:
-##                                        G = 0 
-##                                        for k in range(tau + 1, min(tau + self.bootstrap,T)):
-##                                            G += pow(self.gamma,k-tau-1)*self.rewards[k]
-##                                            if tau + self.bootstrap < T:
-##                                                G += pow(self.gamma,self.bootstrap)*self.getQ(self.states[tau+self.bootstrap],self.path[tau+self.bootstrap])
-##                                                self.learnQ(self.states[tau],self.path[tau],G)
-#                            self.reset()
-#                            i += 1
-#                        else:
-#                            action = self.chooseAction(self.State.state)
-#                            self.states.append(self.State.nxtPosition(action))
-#                            self.path.append(action)
-#                            self.State = self.takeAction(action)
-#                            self.rewards.append(self.State.giveReward())
-#                            self.State.isEndFunc()
     def play(self, rounds=10):
         i = 0    
         T=float('inf')
