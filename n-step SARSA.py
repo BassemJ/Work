@@ -169,5 +169,5 @@ class Agent:
 
 if __name__ == "__main__":
     ag = Agent()
-    ag.play(200)
+    ag.play(1000)
     print(ag.showPolicy())
